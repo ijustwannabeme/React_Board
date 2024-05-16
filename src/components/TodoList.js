@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import TodoItem from "./TodoItem";
-import { useTodoState } from "../TodoContext";
+import { useTodoDispatch, useTodoState } from "../TodoContext";
 
 const TodoListBlock = styled.div`
   flex: 1;
@@ -12,14 +12,18 @@ const TodoListBlock = styled.div`
 `;
 
 function TodoList() {
-  const [posts, setPosts] = useState([]);
+  const posts = useTodoState();
+  const dispatch = useTodoDispatch();
 
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await axios.get(
         "https://jsonplaceholder.typicode.com/posts"
       );
-      setPosts(response.data);
+      dispatch({
+        type: "SET",
+        todos: response.data.slice(0, 10),
+      });
     };
 
     fetchPosts();
