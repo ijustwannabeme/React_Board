@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import axios from "axios";
 import TodoItem from "./TodoItem";
 import { useTodoState } from "../TodoContext";
 
@@ -11,17 +12,31 @@ const TodoListBlock = styled.div`
 `;
 
 function TodoList() {
-  const todos = useTodoState();
+  const [posts, setPosts] = useState([]);
 
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await axios.get(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      setPosts(response.data);
+    };
+
+    fetchPosts();
+  }, []);
   return (
     <TodoListBlock>
-      {todos.map((todo) => (
+      {posts.map((post) => (
         <TodoItem
-          key={todo.id}
-          id={todo.id}
-          text={todo.text}
-          done={todo.done}
+          key={post.id}
+          id={post.id}
+          title={post.title}
+          text={post.body}
         />
+        /* <li key={post.id}>
+          <h2>{post.title}</h2>
+          <p>{post.body}</p>
+        </li> */
       ))}
     </TodoListBlock>
   );
